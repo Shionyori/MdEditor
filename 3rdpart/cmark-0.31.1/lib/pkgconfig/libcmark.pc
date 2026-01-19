@@ -1,7 +1,7 @@
-prefix=D:/SDK/cmark-0.31.1/install
-exec_prefix=D:/SDK/cmark-0.31.1/install
-libdir=D:/SDK/cmark-0.31.1/install/lib
-includedir=D:/SDK/cmark-0.31.1/install/include
+prefix=D:/Project/MdEditor/3rdpart/cmark-0.31.1
+exec_prefix=D:/Project/MdEditor/3rdpart/cmark-0.31.1
+libdir=D:/Project/MdEditor/3rdpart/cmark-0.31.1/lib
+includedir=D:/Project/MdEditor/3rdpart/cmark-0.31.1/include
 
 Name: libcmark
 Description: CommonMark parsing, rendering, and manipulation

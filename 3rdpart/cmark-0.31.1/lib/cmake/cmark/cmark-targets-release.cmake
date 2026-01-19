@@ -18,11 +18,11 @@ list(APPEND _cmake_import_check_files_for_cmark::cmark_exe "${_IMPORT_PREFIX}/bi
 set_property(TARGET cmark::cmark APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
 set_target_properties(cmark::cmark PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
-  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/cmark.lib"
+  IMPORTED_LOCATION_RELEASE "${_IMPORT_PREFIX}/lib/libcmark.a"
   )
 
 list(APPEND _cmake_import_check_targets cmark::cmark )
-list(APPEND _cmake_import_check_files_for_cmark::cmark "${_IMPORT_PREFIX}/lib/cmark.lib" )
+list(APPEND _cmake_import_check_files_for_cmark::cmark "${_IMPORT_PREFIX}/lib/libcmark.a" )
 
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)

@@ -19,8 +19,6 @@ find_package(Qt6 REQUIRED COMPONENTS
     Core
     Gui
     Widgets
-    WebEngineWidgets
-    WebChannel
 )
 
 # 源文件
@@ -56,22 +54,33 @@ configure_file(res/default.md ${CMAKE_BINARY_DIR}/res/default.md COPYONLY)
 # 可执行文件
 qt_add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SOURCES} ${PROJECT_RESOURCES})
 
-# 在此处设置cmark库路径
-set(CMARK_ROOT "${CMAKE_SOURCE_DIR}/3rdparty/cmark-0.31.1")
-find_library(CMARK_LIB cmark PATHS ${CMARK_ROOT}/lib REQUIRED)
-find_path   (CMARK_INC cmark.h  PATHS ${CMARK_ROOT}/include REQUIRED)
+# 在此处设置 cmark 库路径（仓库目录为 `3rdpart`，不是 `3rdparty`）
+set(CMARK_ROOT "${CMAKE_SOURCE_DIR}/3rdpart/cmark-0.31.1")
 
-target_include_directories(${PROJECT_NAME} PRIVATE ${CMARK_INC})
-
-# 链接
-target_link_libraries(${PROJECT_NAME} PRIVATE
-    Qt6::Core
-    Qt6::Gui
-    Qt6::Widgets
-    Qt6::WebEngineWidgets
-    Qt6::WebChannel
-    ${CMARK_LIB}
-)
+# 优先使用随带的 CMake 配置包（会导入目标 `cmark::cmark`），
+# 如果缺失则回退到按路径查找静态库/头文件。
+find_package(cmark CONFIG PATHS "${CMARK_ROOT}/lib/cmake" NO_DEFAULT_PATH)
+if(TARGET cmark::cmark)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        cmark::cmark
+    )
+else()
+    find_library(CMARK_LIB cmark PATHS "${CMARK_ROOT}/lib")
+    find_path(CMARK_INC cmark.h PATHS "${CMARK_ROOT}/include")
+    if(NOT CMARK_LIB OR NOT CMARK_INC)
+        message(FATAL_ERROR "Could not find CMARK library or headers. Set CMARK_ROOT or install cmark.")
+    endif()
+    target_include_directories(${PROJECT_NAME} PRIVATE ${CMARK_INC})
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt6::Core
+        Qt6::Gui
+        Qt6::Widgets
+        ${CMARK_LIB}
+    )
+endif()
 
 # 安装规则
 include(GNUInstallDirs)
