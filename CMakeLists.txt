@@ -65,6 +65,8 @@ if(TARGET cmark::cmark)
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        Qt6::WebEngineWidgets
+        Qt6::WebChannel
         cmark::cmark
     )
 else()
@@ -78,6 +80,8 @@ else()
         Qt6::Core
         Qt6::Gui
         Qt6::Widgets
+        Qt6::WebEngineWidgets
+        Qt6::WebChannel
         ${CMARK_LIB}
     )
 endif()
