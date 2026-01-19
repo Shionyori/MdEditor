@@ -19,6 +19,8 @@ find_package(Qt6 REQUIRED COMPONENTS
     Core
     Gui
     Widgets
+    WebEngineWidgets
+    WebChannel
 )
 
 # 源文件
@@ -55,7 +57,7 @@ configure_file(res/default.md ${CMAKE_BINARY_DIR}/res/default.md COPYONLY)
 qt_add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SOURCES} ${PROJECT_RESOURCES})
 
 # 在此处设置 cmark 库路径（仓库目录为 `3rdpart`，不是 `3rdparty`）
-set(CMARK_ROOT "${CMAKE_SOURCE_DIR}/3rdpart/cmark-0.31.1")
+set(CMARK_ROOT "${CMAKE_SOURCE_DIR}/3rdpart/cmark-0.31.1/msvc")
 
 # 优先使用随带的 CMake 配置包（会导入目标 `cmark::cmark`），
 # 如果缺失则回退到按路径查找静态库/头文件。
