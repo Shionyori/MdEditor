@@ -51,10 +51,16 @@ qt_add_resources(PROJECT_RESOURCES
     res/icons/icons.qrc
 )
 
-configure_file(res/default.md ${CMAKE_BINARY_DIR}/res/default.md COPYONLY)
-
 # 可执行文件
 qt_add_executable(${PROJECT_NAME} MACOSX_BUNDLE ${PROJECT_SOURCES} ${PROJECT_RESOURCES})
+
+# 确保将整个 res 目录（包含 default.md 和 icons）复制到可执行文件同级目录
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_SOURCE_DIR}/res"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/res"
+    COMMENT "Copying all resources to output directory..."
+)
 
 # 在此处设置 cmark 库路径（仓库目录为 `3rdpart`，不是 `3rdparty`）
 set(CMARK_ROOT "${CMAKE_SOURCE_DIR}/3rdpart/cmark-0.31.1/msvc")
@@ -86,6 +92,28 @@ else()
         Qt6::WebChannel
         ${CMARK_LIB}
     )
+endif()
+
+# Windows 下自动部署 Qt 依赖 (修复 fehlenden WebEngineProcess)
+if(WIN32)
+    # 尝试定位 windeployqt
+    if(TARGET Qt6::Core)
+        get_target_property(_qt_core_lib Qt6::Core LOCATION)
+        get_filename_component(_qt_bin_dir "${_qt_core_lib}" DIRECTORY)
+    endif()
+
+    find_program(WINDEPLOYQT_EXE windeployqt HINTS "${_qt_bin_dir}")
+
+    if(WINDEPLOYQT_EXE)
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND "${WINDEPLOYQT_EXE}"
+                --no-compiler-runtime
+                --no-opengl-sw
+                --verbose 0
+                "$<TARGET_FILE:${PROJECT_NAME}>"
+            COMMENT "Running windeployqt..."
+        )
+    endif()
 endif()
 
 # 安装规则

@@ -61,3 +61,8 @@ void Editor::saveAs()
         saveFile();
     }
 }
+
+QString Editor::getCurrentFilePath() const
+{
+    return currentFilePath;
+}

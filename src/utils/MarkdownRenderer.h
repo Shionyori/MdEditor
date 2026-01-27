@@ -7,7 +7,7 @@
 class MarkdownRenderer
 {
 public:
-    static QString markdownToHtml(QString& markdown);
+    static QString markdownToHtml(const QString& markdown);
 };
 
 #endif // MARKDOWNRENDERER_H

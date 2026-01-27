@@ -2,6 +2,10 @@
 #include "Preview.h"
 #include "../utils/MarkdownRenderer.h"
 #include <QTimer>
+#include <QApplication>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrl>
 
 Preview::Preview(Editor* editor, QWidget *parent)
     : QWebEngineView(parent), editor(editor)
@@ -23,12 +27,18 @@ void Preview::updatePreview()
     QString markdownText = editor->toPlainText();
     QString htmlText = MarkdownRenderer::markdownToHtml(markdownText);
 
-    // 确保 baseUrl 指向一个真实存在的目录；不存在就创建
-    QDir imgDir(QApplication::applicationDirPath());
-    if (!imgDir.exists())
-        imgDir.mkpath(imgDir.absolutePath());
+    QString baseUrl;
+    QString currentFilePath = editor->getCurrentFilePath();
+    if (!currentFilePath.isEmpty()) {
+        baseUrl = QFileInfo(currentFilePath).absolutePath();
+    } else {
+        // 对于未保存的文件（如默认文档），默认以 res 目录作为基准路径
+        baseUrl = QApplication::applicationDirPath() + "/res";
+    }
+    
+    if (!baseUrl.endsWith("/")) baseUrl += "/";
 
-    setHtml(htmlText, QUrl::fromLocalFile(imgDir.absolutePath() + "/"));
+    setHtml(htmlText, QUrl::fromLocalFile(baseUrl));
 }
 
 // 覆盖 resizeEvent，只在最后一次 resize 完成后刷新

@@ -20,6 +20,7 @@ public:
     void openFile();
     void saveFile();
     void saveAs();
+    QString getCurrentFilePath() const;
 
 private:
     QString currentFilePath;

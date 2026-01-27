@@ -53,11 +53,19 @@ void ViewPage::connectSignals()
 
 void ViewPage::loadDefaultDocument()
 {
-    QString defaultFilePath = QString(QDir::currentPath() + "/res/default.md");
+    // 优先从构建目录加载，如果没有则尝试从资源加载（如果以后添加了 qrc）
+    QString defaultFilePath = QCoreApplication::applicationDirPath() + "/res/default.md";
+    if (!QFile::exists(defaultFilePath)) {
+        // 回退尝试当前工作目录
+        defaultFilePath = "res/default.md";
+    }
+
     QFile file(defaultFilePath);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
         QTextStream in(&file);
+        // 设置为 UTF-8 编码，防止中文乱码
+        in.setEncoding(QStringConverter::Utf8);
         QString content = in.readAll();
         editor->setPlainText(content);
         file.close();

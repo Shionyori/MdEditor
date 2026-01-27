@@ -2,7 +2,10 @@
 ## Hello, Markdown!
 ### Hello, Markdown!
 
-![icon](images/app_icon.png)
+![icon](./icons/app_icon.png)
+
+### 调整图片大小示例 (使用 HTML 标签)
+<img src="./icons/app_icon.png" width="32" height="32" />
 
 ---
 
